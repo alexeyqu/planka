@@ -155,21 +155,31 @@ module.exports = {
 
     card.isSubscribed = await sails.helpers.users.isCardSubscriber(currentUser.id, card.id);
 
-    const users = card.creatorUserId ? await User.qm.getByIds([card.creatorUserId]) : [];
-    const cardMemberships = await CardMembership.qm.getByCardId(card.id);
-    const cardLabels = await CardLabel.qm.getByCardId(card.id);
+    const [
+      users,
+      cardMemberships,
+      cardLabels,
+      taskLists,
+      attachments,
+      customFieldGroups,
+      customFieldValues,
+    ] = await Promise.all([
+      card.creatorUserId ? User.qm.getByIds([card.creatorUserId]) : [],
+      CardMembership.qm.getByCardId(card.id),
+      CardLabel.qm.getByCardId(card.id),
+      TaskList.qm.getByCardId(card.id),
+      Attachment.qm.getByCardId(card.id),
+      CustomFieldGroup.qm.getByCardId(card.id),
+      CustomFieldValue.qm.getByCardId(card.id),
+    ]);
 
-    const taskLists = await TaskList.qm.getByCardId(card.id);
     const taskListIds = sails.helpers.utils.mapRecords(taskLists);
-
-    const tasks = await Task.qm.getByTaskListIds(taskListIds);
-    const attachments = await Attachment.qm.getByCardId(card.id);
-
-    const customFieldGroups = await CustomFieldGroup.qm.getByCardId(card.id);
     const customFieldGroupIds = sails.helpers.utils.mapRecords(customFieldGroups);
 
-    const customFields = await CustomField.qm.getByCustomFieldGroupIds(customFieldGroupIds);
-    const customFieldValues = await CustomFieldValue.qm.getByCardId(card.id);
+    const [tasks, customFields] = await Promise.all([
+      Task.qm.getByTaskListIds(taskListIds),
+      CustomField.qm.getByCustomFieldGroupIds(customFieldGroupIds),
+    ]);
 
     return {
       item: card,
