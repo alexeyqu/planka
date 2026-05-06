@@ -1,8 +1,7 @@
 # Stage 1: Server build
 FROM node:22-alpine AS server
 
-RUN apk -U upgrade \
-  && apk add build-base python3 --no-cache
+RUN apk add --no-cache build-base python3 py3-pip
 
 WORKDIR /app
 
@@ -19,15 +18,13 @@ WORKDIR /app
 
 COPY client .
 
-RUN npm install npm --global \
-  && npm install --omit=dev \
+RUN npm install --omit=dev \
   && INDEX_FORMAT=ejs DISABLE_ESLINT_PLUGIN=true npm run build
 
 # Stage 3: Final image
 FROM node:22-alpine
 
-RUN apk -U upgrade \
-  && apk add bash python3 squid --no-cache
+RUN apk add --no-cache bash python3 squid
 
 USER node
 WORKDIR /app
