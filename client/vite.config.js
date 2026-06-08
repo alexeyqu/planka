@@ -63,5 +63,19 @@ export default defineConfig({
   },
   build: {
     target: browserslistToEsbuild(['>0.2%', 'not dead', 'not op_mini all']),
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-gravity': [
+            '@gravity-ui/markdown-editor',
+            '@gravity-ui/uikit',
+            '@gravity-ui/components',
+          ],
+          'vendor-ui': ['semantic-ui-react'],
+          'vendor-react': ['react', 'react-dom', 'react-redux', 'redux'],
+          'vendor-i18n': ['i18next', 'react-i18next'],
+        },
+      },
+    },
   },
 });
