@@ -5,10 +5,11 @@
 
 import EntryActionTypes from '../constants/EntryActionTypes';
 
-const createListInCurrentBoard = (data) => ({
+const createListInCurrentBoard = (data, index) => ({
   type: EntryActionTypes.LIST_IN_CURRENT_BOARD_CREATE,
   payload: {
     data,
+    index,
   },
 });
 

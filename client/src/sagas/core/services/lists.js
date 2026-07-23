@@ -14,12 +14,12 @@ import api from '../../../api';
 import { createLocalId } from '../../../utils/local-id';
 import ToastTypes from '../../../constants/ToastTypes';
 
-export function* createList(boardId, data) {
+export function* createList(boardId, data, index) {
   const localId = yield call(createLocalId);
 
   const nextData = {
     ...data,
-    position: yield select(selectors.selectNextListPosition, boardId),
+    position: yield select(selectors.selectNextListPosition, boardId, index),
   };
 
   yield put(
@@ -41,10 +41,10 @@ export function* createList(boardId, data) {
   yield put(actions.createList.success(localId, list));
 }
 
-export function* createListInCurrentBoard(data) {
+export function* createListInCurrentBoard(data, index) {
   const { boardId } = yield select(selectors.selectPath);
 
-  yield call(createList, boardId, data);
+  yield call(createList, boardId, data, index);
 }
 
 export function* handleListCreate(list) {
