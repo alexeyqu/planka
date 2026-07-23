@@ -36,6 +36,7 @@ const ActionsStep = React.memo(({ listId, onNameEdit, onCardAdd, onClose }) => {
   const selectListById = useMemo(() => selectors.makeSelectListById(), []);
 
   const list = useSelector((state) => selectListById(state, listId));
+  const listIds = useSelector(selectors.selectKanbanListIdsForCurrentBoard);
 
   const dispatch = useDispatch();
   const [t] = useTranslation();
@@ -65,6 +66,36 @@ const ActionsStep = React.memo(({ listId, onNameEdit, onCardAdd, onClose }) => {
     onCardAdd();
     onClose();
   }, [onCardAdd, onClose]);
+
+  const handleAddListLeftClick = useCallback(() => {
+    const index = listIds.indexOf(listId);
+
+    dispatch(
+      entryActions.createListInCurrentBoard(
+        {
+          name: t('common.list'),
+          type: ListTypes.ACTIVE,
+        },
+        index,
+      ),
+    );
+    onClose();
+  }, [listId, listIds, dispatch, t, onClose]);
+
+  const handleAddListRightClick = useCallback(() => {
+    const index = listIds.indexOf(listId);
+
+    dispatch(
+      entryActions.createListInCurrentBoard(
+        {
+          name: t('common.list'),
+          type: ListTypes.ACTIVE,
+        },
+        index + 1,
+      ),
+    );
+    onClose();
+  }, [listId, listIds, dispatch, t, onClose]);
 
   const handleEditTypeClick = useCallback(() => {
     openStep(StepTypes.EDIT_TYPE);
@@ -156,6 +187,18 @@ const ActionsStep = React.memo(({ listId, onNameEdit, onCardAdd, onClose }) => {
           <Menu.Item className={styles.menuItem} onClick={handleAddCardClick}>
             <Icon name="list alternate outline" className={styles.menuItemIcon} />
             {t('action.addCard', {
+              context: 'title',
+            })}
+          </Menu.Item>
+          <Menu.Item className={styles.menuItem} onClick={handleAddListLeftClick}>
+            <Icon name="arrow left" className={styles.menuItemIcon} />
+            {t('action.addListLeft', {
+              context: 'title',
+            })}
+          </Menu.Item>
+          <Menu.Item className={styles.menuItem} onClick={handleAddListRightClick}>
+            <Icon name="arrow right" className={styles.menuItemIcon} />
+            {t('action.addListRight', {
               context: 'title',
             })}
           </Menu.Item>

@@ -10,8 +10,8 @@ import EntryActionTypes from '../../../constants/EntryActionTypes';
 
 export default function* listsWatchers() {
   yield all([
-    takeEvery(EntryActionTypes.LIST_IN_CURRENT_BOARD_CREATE, ({ payload: { data } }) =>
-      services.createListInCurrentBoard(data),
+    takeEvery(EntryActionTypes.LIST_IN_CURRENT_BOARD_CREATE, ({ payload: { data, index } }) =>
+      services.createListInCurrentBoard(data, index),
     ),
     takeEvery(EntryActionTypes.LIST_CREATE_HANDLE, ({ payload: { list } }) =>
       services.handleListCreate(list),
