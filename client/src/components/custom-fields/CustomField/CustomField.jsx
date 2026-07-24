@@ -12,6 +12,7 @@ import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
 import { buildCustomFieldValueId } from '../../../models/CustomFieldValue';
 import { isListArchiveOrTrash } from '../../../utils/record-helpers';
+import { isUrl } from '../../../utils/validator';
 import { BoardMembershipRoles } from '../../../constants/Enums';
 import ValueField from './ValueField';
 
@@ -66,6 +67,22 @@ const CustomField = React.memo(({ id, customFieldGroupId }) => {
     [id, customFieldGroupId, cardId, dispatch],
   );
 
+  const valueNode = useMemo(() => {
+    if (!customFieldValue || !customFieldValue.content) {
+      return ' ';
+    }
+
+    if (isUrl(customFieldValue.content)) {
+      return (
+        <a href={customFieldValue.content} target="_blank" rel="noreferrer">
+          {customFieldValue.content}
+        </a>
+      );
+    }
+
+    return customFieldValue.content;
+  }, [customFieldValue]);
+
   const handleCopyClick = useCallback(() => {
     if (isCopied) {
       return;
@@ -90,9 +107,7 @@ const CustomField = React.memo(({ id, customFieldGroupId }) => {
             onUpdate={handleValueUpdate}
           />
         ) : (
-          <div className={styles.value}>
-            {customFieldValue ? customFieldValue.content : '\u00A0'}
-          </div>
+          <div className={styles.value}>{valueNode}</div>
         )}
         {customFieldValue && customFieldValue.content && (
           <Button className={styles.copyButton} onClick={handleCopyClick}>
