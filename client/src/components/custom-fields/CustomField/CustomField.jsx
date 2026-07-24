@@ -67,12 +67,14 @@ const CustomField = React.memo(({ id, customFieldGroupId }) => {
     [id, customFieldGroupId, cardId, dispatch],
   );
 
+  const isValueUrl = !!customFieldValue && isUrl(customFieldValue.content);
+
   const valueNode = useMemo(() => {
     if (!customFieldValue || !customFieldValue.content) {
       return ' ';
     }
 
-    if (isUrl(customFieldValue.content)) {
+    if (isValueUrl) {
       return (
         <a href={customFieldValue.content} target="_blank" rel="noreferrer">
           {customFieldValue.content}
@@ -81,7 +83,7 @@ const CustomField = React.memo(({ id, customFieldGroupId }) => {
     }
 
     return customFieldValue.content;
-  }, [customFieldValue]);
+  }, [customFieldValue, isValueUrl]);
 
   const handleCopyClick = useCallback(() => {
     if (isCopied) {
@@ -108,6 +110,17 @@ const CustomField = React.memo(({ id, customFieldGroupId }) => {
           />
         ) : (
           <div className={styles.value}>{valueNode}</div>
+        )}
+        {canEdit && isValueUrl && (
+          <Button
+            as="a"
+            href={customFieldValue.content}
+            target="_blank"
+            rel="noreferrer"
+            className={styles.openButton}
+          >
+            <Icon fitted name="external" />
+          </Button>
         )}
         {customFieldValue && customFieldValue.content && (
           <Button className={styles.copyButton} onClick={handleCopyClick}>
