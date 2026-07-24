@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 
 import selectors from '../../../selectors';
+import { isUrl } from '../../../utils/validator';
 
 import styles from './CustomFieldValueChip.module.scss';
 
@@ -29,6 +30,8 @@ const CustomFieldValueChip = React.memo(({ id, size, onClick }) => {
     selectCustomFieldById(state, customFieldValue.customFieldId),
   );
 
+  const isValueUrl = !onClick && isUrl(customFieldValue.content);
+
   const contentNode = (
     <span
       title={`${customField.name}: ${customFieldValue.content}`}
@@ -39,7 +42,13 @@ const CustomFieldValueChip = React.memo(({ id, size, onClick }) => {
       )}
     >
       {!Number.isNaN(parseFloat(customFieldValue.content)) && `${customField.name}: `}
-      {customFieldValue.content}
+      {isValueUrl ? (
+        <a href={customFieldValue.content} target="_blank" rel="noreferrer">
+          {customFieldValue.content}
+        </a>
+      ) : (
+        customFieldValue.content
+      )}
     </span>
   );
 
